@@ -1,12 +1,35 @@
 pg_dirtyread 1.0
 ================
 
-[Original pg_dirtyread](https://github.com/omniti-labs/pgtreats)
+[Forked From pg_dirtyread](https://github.com/omniti-labs/pgtreats)
 
 The pg_dirtyread extension provides the ability to read dead but unvacuumed
 rows from a relation.
 
-Building
+Homebrew
+-------
+
+`brew tap VladimirMikhailov/pgtreats`
+
+Using
+-----
+
+  ```sql
+    CREATE EXTENSION pg_dirtyread;
+
+    # Create table and disable autovacuum
+    CREATE TABLE versions (id INTEGER PRIMARY KEY, text TEXT);
+    ALTER TABLE versions SET (
+      autovacuum_enabled = false, toast.autovacuum_enabled = false
+    );
+
+    INSERT INTO versions VALUES (1, 'Test'), (2, 'New Test');
+    DELETE FROM versions WHERE id = 1;
+
+    SELECT * FROM pg_dirtyread('versions'::regclass) AS t(id INTEGER, text TEXT);
+  ```
+
+Manual Installation
 --------
 
 To build pg_dirtyread, just do this:
@@ -24,19 +47,3 @@ package management system such as RPM to install PostgreSQL, be sure that the
 to find it:
 
     env PG_CONFIG=/path/to/pg_config make && make install
-
-Loading
--------
-
-Once pg_dirtyread is built and installed, you can add it to a database. Loading
-pg_dirtyread is as simple as connecting to a database as a super user and
-running:
-
-    CREATE EXTENSION pg_dirtyread;
-
-Using
------
-
-    SELECT * FROM pg_dirtyread('foo'::regclass) as t(bar bigint, baz text);
-
-Where the schema of `foo` is `(bar bigint, baz text)`.
