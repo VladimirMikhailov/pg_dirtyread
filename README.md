@@ -9,7 +9,10 @@ rows from a relation.
 Homebrew
 -------
 
-`brew tap VladimirMikhailov/pgtreats`
+`
+  brew tap VladimirMikhailov/pgtreats
+  brew install pg_dirtyread
+`
 
 Using
 -----
